@@ -1,7 +1,7 @@
 {
   "name": "geo-calc-line-references",
   "version": "0.1.3",
-  "description": "Module that calculates distance traveled along a LINESTRING geometry..",
+  "description": "Returns WKT of linestring with linear references added as the 4th (\"M\") Dimension.",
   "main": "gpxCalcLineReferences.js",
   "scripts": {},
   "engines": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tcallsen/geoCalcLineElevation"
+    "url": "https://github.com/tcallsen/geoCalcLineReferences"
   },
   "author": "Taylor Callsen",
   "license": "ISC",

@@ -5,8 +5,22 @@ The final result is in the same units as the original source data.. likely meter
 
 ## Installing with NPM
 
-TODO
+```
+npm i --save geo-calc-line-references
+```
 
 ## Example
+```
 
-Execute ```node example.js```.
+// load dependencies 
+const fs = require('fs')
+const gpxCalcLineReferences = require('./gpxCalcLineReferences.js')
+
+// open sample file and load WKT
+const sampleWKT = fs.readFileSync('./sample_data/Sample_Stintson_Beach.wkt', 'utf8')
+
+// calculate linear references and save into WKT with 4th "M" dimension
+const referencedWKT = gpxCalcLineReferences( sampleWKT )
+
+console.log(referencedWKT)
+```
