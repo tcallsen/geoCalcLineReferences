@@ -1,38 +1,53 @@
 'use strict';
 
-const toGeoJSON = require('@mapbox/togeojson')
-const DOMParser = require('xmldom').DOMParser
+var parse = require('wellknown')
+const turf = require('@turf/turf')
 
 /**
- * Returns elevation gain in supplied GPX file. 
- *  Calculation outlined here: https://www.gpsvisualizer.com/tutorials/elevation_gain.html
+ * Returns WKT of linestring with linear references added as the 4th ("M") Dimension. 
+ *  
+ *  For more information on the WKT coordinate dimensions, see the Geometric Objects section here:
+ *    https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry
  * 
- * @param {file} inputFile
- * @return {number} elevationGain, in same unit as source data
+ * @param {string} LINESTRING Z, in WKT format
+ * @return {string} LINESTRING ZM, in WKT format
  *
  */
-module.exports = function(inputFile) {
+module.exports = function(inputWKT) {
 
-  // parse GPX to GeoJSON and extract coords
-  let coords
-  try {
-    var doc = new DOMParser().parseFromString(inputFile)
-    const geoJSON = toGeoJSON.gpx(doc)
-    coords = geoJSON.features[0].geometry.coordinates
-    if (coords[0].length < 3) throw 'error - elevation data not supplied - geoCalcLineElevation exiting early'
-  } catch (e) {
-    console.error(e);
-    return -1 // exit if error parsing inputFile
-  }
-  
-  // loop through coords and tally elevation gain
-  let elevationGain = 0
-  coords.forEach( (coord, index) => {
-    if (index == coords.length - 1) return // stop 1 point early since comparison requires 2 points
-    const elevationDifference = coords[index+1][2] - coords[index][2]
-    if (elevationDifference > 0) elevationGain += elevationDifference
+  // convert to GeoJSON
+  const linestringJSON = parse(inputWKT).coordinates
+
+  // load into turf linestring obj
+  const linestring = turf.lineString(linestringJSON)
+
+  // add linear referencing - 4th "M" dimension
+  let previousLength = 0 // track previous length
+  let previousCoord = null
+  linestring.geometry.coordinates.forEach( (currentCoord, index) => {
+    
+    const currentLength = 0
+
+    // if first point set length to 0, otherwise append length to end of point array
+    if (index===0) {
+      currentCoord.push(0)
+    } else {
+      const distance = turf.distance(previousCoord, currentCoord, {units: 'miles'})
+      currentCoord.push(previousCoord[3] + distance)
+    }
+
+    previousLength = currentLength
+    previousCoord = currentCoord
+
   })
 
-  return elevationGain
+  // confirm total line length and cumulative lengths match
+  // console.log('total length:', turf.length(linestring, {units: 'miles'}))
+  // console.log('cum length:', linestring.geometry.coordinates[linestring.geometry.coordinates.length-1][3])
+
+  // output back to WKT (including 4th dimension)
+  const outputWKT = parse.stringify(linestring)
+
+  return outputWKT
 
 }
