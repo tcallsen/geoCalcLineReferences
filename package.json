@@ -14,8 +14,7 @@
   "author": "Taylor Callsen",
   "license": "ISC",
   "dependencies": {
-    "@turf/length": "^6.0.2",
-    "@turf/turf": "^4.5.2",
+    "@turf/turf": "^5.1.6",
     "wellknown": "^0.5.0"
   }
 }
