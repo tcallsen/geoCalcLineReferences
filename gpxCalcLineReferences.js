@@ -46,7 +46,10 @@ module.exports = function(inputWKT) {
   // console.log('cum length:', linestring.geometry.coordinates[linestring.geometry.coordinates.length-1][3])
 
   // output back to WKT (including 4th dimension)
-  const outputWKT = parse.stringify(linestring)
+  let outputWKT = parse.stringify(linestring)
+
+  // explicitly label LINESTRING as LINSTRING ZM - not handled by wellknown library..
+  outputWKT = outputWKT.replace("LINESTRING", "LINESTRING ZM")
 
   return outputWKT
 
