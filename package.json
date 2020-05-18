@@ -1,6 +1,6 @@
 {
   "name": "geo-calc-line-references",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Returns WKT of linestring with linear references added as the 4th (\"M\") Dimension.",
   "main": "gpxCalcLineReferences.js",
   "scripts": {},

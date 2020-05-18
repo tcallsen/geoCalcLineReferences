@@ -15,12 +15,18 @@ const turf = require('@turf/turf')
  */
 module.exports = function(inputWKT) {
 
-  // convert to GeoJSON
-  const linestringJSON = parse(inputWKT).coordinates
-
-  // load into turf linestring obj
-  const linestring = turf.lineString(linestringJSON)
-
+  // do POST body reading in try catch
+  let linestring
+  try {
+    // parse WKT and convert to GeoJSON
+    const linestringJSON = parse(inputWKT).coordinates
+    // load into turf linestring obj
+    linestring = turf.lineString(linestringJSON)
+  } catch (e) {
+    // console.error(e);
+    return -1 // exit if error parsing inputFile
+  }
+  
   // add linear referencing - 4th "M" dimension
   let previousLength = 0 // track previous length
   let previousCoord = null
